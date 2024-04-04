@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A* Algorithm Visualization</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #b2f0f0;
+  }
+  .grid-container {
+    display: inline-grid;
+    grid-template-columns: repeat(10, 50px);
+    grid-gap: 1px;
+    margin-top: 20px;
+  }
+  .grid-item {
+    width: 50px;
+    height: 50px;
+    background-color: #ddd;
+    border: 1px solid #999;
+    transition: background-color 0.3s;
+  }
+  .start {
+    background-color: #00f;
+  }
+  .goal {
+    background-color: #f00;
+  }
+  .obstacle {
+    background-color: #000;
+  }
+  .path {
+    background-color: #0f0 !important;
+  }
+  .info {
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<h1>A* Algorithm Visualization</h1>
+<button onclick="startAStar()">Start A* Algorithm</button>
+<button onclick="resetGrid()">Reset</button>
+<div class="grid-container">
+</div>
+<div class="info">
+  <h2>Node Information</h2>
+  <p id="gScore">gScore: </p>
+  <p id="hScore">hScore: </p>
+  <p id="fScore">fScore: </p>
+</div>
+
+<script>
+const ROWS = 10;
+const COLS = 10;
+
+let grid = [];
+
+// Initialize grid
+for (let i = 0; i < ROWS; i++) {
+  grid[i] = [];
+  for (let j = 0; j < COLS; j++) {
+    grid[i][j] = 'empty';
+  }
+}
+
+// Render grid
+const gridContainer = document.querySelector('.grid-container');
+for (let i = 0; i < ROWS; i++) {
+  for (let j = 0; j < COLS; j++) {
+    const cell = document.createElement('div');
+    cell.classList.add('grid-item');
+    cell.dataset.row = i;
+    cell.dataset.col = j;
+    cell.addEventListener('click', function() {
+      setNode(this);
+    });
+    gridContainer.appendChild(cell);
+  }
+}
+
+// Set start and goal nodes
+let startNode = { x: null, y: null };
+let goalNode = { x: null, y: null };
+
+function setNode(cell) {
+  const row = parseInt(cell.dataset.row);
+  const col = parseInt(cell.dataset.col);
+
+  // If start node is not set, set it
+  if (startNode.x === null && grid[row][col] !== 'obstacle') {
+    startNode.x = col;
+    startNode.y = row;
+    grid[row][col] = 'start';
+    cell.classList.add('start');
+  }
+  // If goal node is not set and not on start node, set it
+  else if (goalNode.x === null && grid[row][col] !== 'obstacle' && (col !== startNode.x || row !== startNode.y)) {
+    goalNode.x = col;
+    goalNode.y = row;
+    grid[row][col] = 'goal';
+    cell.classList.add('goal');
+  }
+  // If not start or goal node and not already an obstacle, toggle obstacle
+  else if (grid[row][col] !== 'start' && grid[row][col] !== 'goal') {
+    if (grid[row][col] === 'obstacle') {
+      grid[row][col] = 'empty';
+      cell.classList.remove('obstacle');
+    } else {
+      grid[row][col] = 'obstacle';
+      cell.classList.add('obstacle');
+    }
+  }
+}
+
+// A* Algorithm
+async function startAStar() {
+  if (startNode.x === null || goalNode.x === null) {
+    alert('Please set both start and goal nodes.');
+    return;
+  }
+
+  const openList = [];
+  const closedList = [];
+
+  const startNodeObj = { x: startNode.x, y: startNode.y, g: 0, h: 0, f: 0, parent: null };
+  const goalNodeObj = { x: goalNode.x, y: goalNode.y };
+
+  openList.push(startNodeObj);
+
+  while (openList.length > 0) {
+    // Find node with lowest f cost in open list
+    let currentNode = openList[0];
+    let currentIndex = 0;
+    for (let i = 1; i < openList.length; i++) {
+      if (openList[i].f < currentNode.f) {
+        currentNode = openList[i];
+        currentIndex = i;
+      }
+    }
+
+    // Move current node from open list to closed list
+    openList.splice(currentIndex, 1);
+    closedList.push(currentNode);
+
+    // Display node information
+    document.getElementById('gScore').textContent = 'gScore: ' + currentNode.g;
+    document.getElementById('hScore').textContent = 'hScore: ' + currentNode.h;
+    document.getElementById('fScore').textContent = 'fScore: ' + currentNode.f;
+
+    // Reached goal
+    if (currentNode.x === goalNodeObj.x && currentNode.y === goalNodeObj.y) {
+      let path = [];
+      let current = currentNode;
+      while (current !== null) {
+        path.push({ x: current.x, y: current.y });
+        current = current.parent;
+      }
+      path.reverse();
+      visualizePath(path);
+      return;
+    }
+
+    // Generate neighbors
+    const neighbors = [];
+    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // Up, Down, Left, Right
+    for (let dir of directions) {
+      const neighborX = currentNode.x + dir[0];
+      const neighborY = currentNode.y + dir[1];
+      if (neighborX >= 0 && neighborX < COLS && neighborY >= 0 && neighborY < ROWS && grid[neighborY][neighborX] !== 'obstacle') {
+        neighbors.push({ x: neighborX, y: neighborY });
+      }
+    }
+
+    for (let neighbor of neighbors) {
+      // Check if neighbor is in closed list
+      if (closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
+        continue;
+      }
+
+      const gScore = currentNode.g + 1;
+      const hScore = Math.abs(neighbor.x - goalNodeObj.x) + Math.abs(neighbor.y - goalNodeObj.y);
+      const fScore = gScore + hScore;
+
+      // Check if neighbor is already in open list with lower f cost
+      const openNode = openList.find(node => node.x === neighbor.x && node.y === neighbor.y);
+      if (openNode && gScore >= openNode.g) {
+        continue;
+      }
+
+      // Add neighbor to open list
+      const neighborObj = { x: neighbor.x, y: neighbor.y, g: gScore, h: hScore, f: fScore, parent: currentNode };
+      if (!openNode) {
+        openList.push(neighborObj);
+      } else {
+        openNode.g = gScore;
+        openNode.f = fScore;
+        openNode.parent = currentNode;
+      }
+    }
+  }
+
+  // No path found
+  alert('No path found.');
+}
+
+function visualizePath(path) {
+  let delay = 100; // Delay in milliseconds
+  path.forEach((node, index) => {
+    setTimeout(() => {
+      const cell = document.querySelector(`.grid-item[data-row="${node.y}"][data-col="${node.x}"]`);
+      cell.classList.add('path');
+    }, delay * index);
+  });
+}
+
+
+// Reset Grid
+function resetGrid() {
+  const gridItems = document.querySelectorAll('.grid-item');
+  gridItems.forEach(item => {
+    item.classList.remove('path', 'start', 'goal', 'obstacle');
+  });
+  // Reset grid array
+  for (let i = 0; i < ROWS; i++) {
+    for (let j = 0; j < COLS; j++) {
+      grid[i][j] = 'empty';
+    }
+  }
+  // Reset start and goal nodes
+  startNode = { x: null, y: null };
+  goalNode = { x: null, y: null };
+}
+</script>
+</body>
+</html>

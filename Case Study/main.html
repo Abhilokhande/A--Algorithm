@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title style="font-size: 36px; font-family: 'Arial Black', sans-serif;">A* Algorithm</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .code {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .note {
+            background-color: #f9f9f9;
+            border-left: 4px solid #3498db;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .center p {
+            margin-right: 10px;
+        }
+
+        .btn {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #27ae60;
+        }
+        
+        /* Style for image */
+        .container img {
+            max-width: 50%; /* Limit image width to container width */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Center the image */
+            margin: 0 auto; /* Center the image */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1><u><b>A* Algorithm</b></u></h1>
+    <img src="img2.png" alt="Image">
+    <div class="note">
+        <p>The A* algorithm is a widely used pathfinding algorithm in computer science. It efficiently searches for the shortest path between two points in a graph, taking into account both the cost of reaching the current node and the estimated cost to the destination.</p>
+    </div>
+    <h2>Algorithm Steps</h2>
+    <p>The A* algorithm typically follows these steps:</p>
+    <ol>
+        <li>Initialize an open list with the start node and a closed list as empty.</li>
+        <li>While the open list is not empty, do the following:</li>
+        <ol type="a">
+            <li>Find the node with the lowest f value (f = g + h) in the open list.</li>
+            <li>If the current node is the goal node, reconstruct the path and return it.</li>
+            <li>Remove the current node from the open list and add it to the closed list.</li>
+            <li>For each neighbor of the current node:</li>
+            <ol type="i">
+                <li>If the neighbor is not traversable or is in the closed list, skip it.</li>
+                <li>If the neighbor is not in the open list, add it and calculate its f, g, and h values.</li>
+                <li>If the neighbor is already in the open list and its new g value is lower than the previous one, update its g value and parent.</li>
+            </ol>
+        </ol>
+    </ol>
+    <div class="center">
+        <p>To know the visual implementation of the A* algorithm through grid form</p>
+        <a href="2p.html" class="btn">Click here</a>
+    </div>
+    <div class="center">
+        <p>To know the visual implementation of the A* algorithm through graph form</p>
+        <a href="3p.html" class="btn">Click here</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortest Path Finder</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color:aquamarine;
+            background-image: url('img.jpeg');
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the background image */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: aliceblue;
+
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .input-container {
+            margin-bottom: 10px;
+        }
+        .input-container label {
+            margin-right: 10px;
+        }
+        .input-container input {
+            width: 50px;
+        }
+        #graphVisualization {
+            margin-top: 20px;
+        }
+        .node {
+            fill: #3498db;
+            stroke: #2980b9;
+        }
+        .edge {
+            stroke: #2c3e50;
+            stroke-width: 2;
+        }
+        .path {
+            stroke: #e74c3c;
+            stroke-width: 4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shortest Path Finder</h1>
+    <div class="input-container">
+        <label for="numNodes">Number of Nodes:</label>
+        <input type="number" id="numNodes" min="2" value="5" onchange="generateEdgeLengthInputs()">
+    </div>
+    <div class="input-container" id="edgeLengths"></div>
+    <div class="input-container">
+        <label for="startNode">Start Node:</label>
+        <input type="text" id="startNode" maxlength="1">
+    </div>
+    <div class="input-container">
+        <label for="destNode">Destination Node:</label>
+        <input type="text" id="destNode" maxlength="1">
+    </div>
+    <button onclick="findShortestPath()">Find Shortest Path</button>
+
+    <svg id="graphVisualization" width="600" height="400"></svg>
+
+    <script>
+        function generateEdgeLengthInputs() {
+            const numNodes = parseInt(document.getElementById('numNodes').value);
+            const edgeLengthsDiv = document.getElementById('edgeLengths');
+            edgeLengthsDiv.innerHTML = ''; // Clear previous inputs
+
+            for (let i = 0; i < numNodes; i++) {
+                for (let j = i + 1; j < numNodes; j++) {
+                    const label = document.createElement('label');
+                    label.textContent = `Edge length from node ${i+1} to node ${j+1}:`;
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.min = '0'; // Assuming edge length cannot be negative
+                    input.value = Math.floor(Math.random() * 10); // Random initial value for edge length
+                    edgeLengthsDiv.appendChild(label);
+                    edgeLengthsDiv.appendChild(input);
+                }
+                edgeLengthsDiv.appendChild(document.createElement('br'));
+            }
+        }
+        function findShortestPath(){
+            var a=document.getElementById(  	)
+            alert("Shortest path: " + shortestPath.path.join(' -> ') + "\nShortest path length: " + shortestPath.cost);
+        }
+        window.onload = generateEdgeLengthInputs;
+    </script>
+</body>
+</html>
+    
